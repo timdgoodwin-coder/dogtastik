@@ -200,24 +200,23 @@ class DogTastikApp {
   }
 
   // Interactive Samples Playback
-  playSample(style, index) {
+  playSample(index) {
+    const card = document.getElementById(`sampleCard-${index}`);
     const playBtn = document.getElementById(`playBtn-${index}`);
     const progressBar = document.getElementById(`progress-${index}`);
-    
-    // If clicking active playing sample, stop it
-    if (this.activeSampleIndex === index && window.dogJingleSynth.isPlaying) {
-      window.dogJingleSynth.stop();
-      this.resetSamplePlayButtons();
+    const timeDisplay = document.getElementById(`time-${index}`);
+    const audioSrc = card.dataset.audioSrc;
+    const style = card.dataset.style;
+
+    // If clicking the active playing sample, stop it
+    if (this.activeSampleIndex === index && (this.sampleAudio || window.dogJingleSynth.isPlaying)) {
+      this.stopActiveSample();
       return;
     }
 
-    // Stop previous synth
-    window.dogJingleSynth.stop();
-    this.resetSamplePlayButtons();
-    
-    // Set active
+    this.stopActiveSample();
     this.activeSampleIndex = index;
-    
+
     // Change active play icon to pause
     playBtn.innerHTML = `
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -233,14 +232,40 @@ class DogTastikApp {
       this.resetSamplePlayButtons();
     };
 
-    // Play synthesis
-    if (style === 'energetic') {
-      window.dogJingleSynth.playEnergetic(progressCallback, endedCallback);
-    } else if (style === 'sleepy') {
-      window.dogJingleSynth.playSleepy(progressCallback, endedCallback);
-    } else if (style === 'playful') {
-      window.dogJingleSynth.playPlayful(progressCallback, endedCallback);
+    if (audioSrc) {
+      // Play the real uploaded jingle
+      const audio = new Audio(audioSrc);
+      this.sampleAudio = audio;
+
+      audio.addEventListener('ended', endedCallback);
+      audio.play();
+
+      this.sampleAudioInterval = setInterval(() => {
+        if (!audio.duration) return;
+        progressCallback((audio.currentTime / audio.duration) * 100);
+        const m = Math.floor(audio.currentTime / 60);
+        const s = Math.floor(audio.currentTime % 60).toString().padStart(2, '0');
+        timeDisplay.textContent = `${m}:${s}`;
+      }, 100);
+    } else {
+      // Fall back to live synthesis for samples without a real recording yet
+      window.dogJingleSynth[
+        style === 'energetic' ? 'playEnergetic' : style === 'sleepy' ? 'playSleepy' : 'playPlayful'
+      ](progressCallback, endedCallback);
     }
+  }
+
+  stopActiveSample() {
+    if (this.sampleAudio) {
+      this.sampleAudio.pause();
+      this.sampleAudio = null;
+    }
+    if (this.sampleAudioInterval) {
+      clearInterval(this.sampleAudioInterval);
+      this.sampleAudioInterval = null;
+    }
+    window.dogJingleSynth.stop();
+    this.resetSamplePlayButtons();
   }
 
   resetSamplePlayButtons() {
@@ -253,17 +278,27 @@ class DogTastikApp {
     [1, 2, 3].forEach(idx => {
       const btn = document.getElementById(`playBtn-${idx}`);
       const progress = document.getElementById(`progress-${idx}`);
+      const timeDisplay = document.getElementById(`time-${idx}`);
+      const card = document.getElementById(`sampleCard-${idx}`);
       if (btn) btn.innerHTML = playSVG;
       if (progress) progress.style.width = '0%';
+      if (timeDisplay && card) timeDisplay.textContent = card.dataset.durationLabel || '0:10';
     });
   }
 
   seekSample(event, index) {
     // If not active, do nothing
     if (this.activeSampleIndex !== index) return;
-    // Standard progress bar seek is not fully implemented in mini-synth (plays to completion),
-    // but we can support restart. We show click event handler for complete feel.
-    this.playSample('', index); // Stop it
+
+    if (this.sampleAudio && this.sampleAudio.duration) {
+      const bar = event.currentTarget;
+      const pct = (event.clientX - bar.getBoundingClientRect().left) / bar.offsetWidth;
+      this.sampleAudio.currentTime = pct * this.sampleAudio.duration;
+      return;
+    }
+
+    // Live synthesis doesn't support seeking, only restart
+    this.playSample(index);
   }
 
   // E-commerce checkout trigger

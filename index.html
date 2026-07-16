@@ -73,27 +73,27 @@
         
         <div class="samples-grid">
           <!-- Sample 1 -->
-          <div class="sample-card orange" id="sampleCard-1">
+          <div class="sample-card orange" id="sampleCard-1" data-audio-src="assets/jingles/fred.mp3" data-duration-label="1:05">
             <div class="sample-header">
-              <div class="dog-avatar">🐕</div>
+              <div class="dog-avatar">🐩</div>
               <div class="sample-info">
-                <h3>Max</h3>
-                <p>Golden Retriever • 2 years old</p>
+                <h3>Fred</h3>
+                <p>Poodle • The Brave Little One</p>
               </div>
             </div>
             <div class="sample-tags">
-              <span class="tag">Energetic</span>
-              <span class="tag">Friendly</span>
-              <span class="tag">Tennis Balls</span>
+              <span class="tag">Brave</span>
+              <span class="tag">Confident</span>
+              <span class="tag">Poodle Power</span>
             </div>
             <p class="sample-lyrics">
-              "Max is zoomin' down the street,
-              Fastest paws you'll ever meet!
-              Chasing yellow tennis balls,
-              He's the happiest pup of all!"
+              "Fred's a poodle, small but bold,
+              Braver than the tales that get told!
+              Fluffy fur and a heart of steel,
+              No fear is too big for this little deal!"
             </p>
             <div class="audio-player-container">
-              <button class="play-btn" id="playBtn-1" onclick="app.playSample('energetic', 1)">
+              <button class="play-btn" id="playBtn-1" onclick="app.playSample(1)">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M8 5v14l11-7z"/>
                 </svg>
@@ -101,12 +101,12 @@
               <div class="audio-progress-bar" onclick="app.seekSample(event, 1)">
                 <div class="audio-progress" id="progress-1"></div>
               </div>
-              <div class="audio-time" id="time-1">0:10</div>
+              <div class="audio-time" id="time-1">1:05</div>
             </div>
           </div>
 
           <!-- Sample 2 -->
-          <div class="sample-card green" id="sampleCard-2">
+          <div class="sample-card green" id="sampleCard-2" data-style="playful" data-duration-label="0:10">
             <div class="sample-header">
               <div class="dog-avatar">🐩</div>
               <div class="sample-info">
@@ -126,7 +126,7 @@
               She's the neighborhood's little queen!"
             </p>
             <div class="audio-player-container">
-              <button class="play-btn" id="playBtn-2" onclick="app.playSample('playful', 2)">
+              <button class="play-btn" id="playBtn-2" onclick="app.playSample(2)">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M8 5v14l11-7z"/>
                 </svg>
@@ -139,7 +139,7 @@
           </div>
 
           <!-- Sample 3 -->
-          <div class="sample-card purple" id="sampleCard-3">
+          <div class="sample-card purple" id="sampleCard-3" data-style="sleepy" data-duration-label="0:10">
             <div class="sample-header">
               <div class="dog-avatar">🦮</div>
               <div class="sample-info">
@@ -159,7 +159,7 @@
               Sleeping through the summer heat..."
             </p>
             <div class="audio-player-container">
-              <button class="play-btn" id="playBtn-3" onclick="app.playSample('sleepy', 3)">
+              <button class="play-btn" id="playBtn-3" onclick="app.playSample(3)">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M8 5v14l11-7z"/>
                 </svg>
