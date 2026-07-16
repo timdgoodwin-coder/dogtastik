@@ -103,9 +103,9 @@
       </div>
 
       <!-- Order List Table -->
-      <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+      <div style="margin-bottom: 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;">
         <h3 style="font-size: 1.3rem;">Order Queue</h3>
-        <select id="statusFilter" onchange="admin.filterOrders()" style="padding: 8px 16px; border-radius: var(--radius-sm); border: 2px solid var(--border); font-family: var(--font-body);">
+        <select id="statusFilter" onchange="admin.filterOrders()" style="padding: 8px 16px; border-radius: var(--radius-sm); border: 2px solid var(--border); font-family: var(--font-body); max-width: 100%;">
           <option value="all">All Orders</option>
           <option value="paid">Paid (Pending Questionnaire)</option>
           <option value="questionnaire">Questionnaire Filled (Needs Compose)</option>
@@ -151,7 +151,7 @@
         
         <!-- Left Column: Dog Details Questionnaire -->
         <div class="dashboard-card" style="box-shadow: none; border-color: var(--border);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 4px;">
             <h3 style="font-size: 1.2rem;">Dog Questionnaire Details</h3>
             <button class="btn btn-secondary btn-sm" id="copyQuestionnaireBtn" style="display: none;" onclick="admin.copyQuestionnaireJSON()">Copy JSON</button>
           </div>

@@ -37,6 +37,33 @@ class DogTastikApp {
     this.handleRouting();
     this.updateNav();
     this.setupQuestionnaireInteractions();
+    this.setupMobileNav();
+  }
+
+  // Mobile hamburger menu: toggle open/closed, close on link click or outside tap
+  setupMobileNav() {
+    const toggle = document.getElementById('navToggle');
+    const panel = document.getElementById('navPanel');
+    if (!toggle || !panel) return;
+
+    const closeNav = () => {
+      panel.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    };
+
+    toggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = panel.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    panel.querySelectorAll('a').forEach(link => link.addEventListener('click', closeNav));
+    document.addEventListener('click', (e) => {
+      if (panel.classList.contains('open') && !panel.contains(e.target) && e.target !== toggle) {
+        closeNav();
+      }
+    });
+    window.addEventListener('hashchange', closeNav);
   }
 
   // Enforces the "pick exactly 3" trait limit and surfaces a suggested vibe card
