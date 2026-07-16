@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DogTastik - Custom Dog Jingles & Tunes</title>
+  <meta name="description" content="Get a customized, professionally composed jingle or song about your favorite dog. The perfect musical gift for pet lovers.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Sticky Navigation Header -->
+  <header>
+    <div class="nav-container">
+      <a href="#home" class="logo" id="logoLink">
+        <!-- SVG Dog Head with Music Note -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-6h2v6zm0-8h-2V6h2v2zM12 13c-.55 0-1-.45-1-1V8c0-.55.45-1 1-1s1 .45 1 1v4c0 .55-.45 1-1 1z"/>
+          <circle cx="9" cy="10" r="1.5"/>
+          <circle cx="15" cy="10" r="1.5"/>
+          <path d="M9.5 14.5c1.2 1.2 3.8 1.2 5 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+          <path d="M16 4.5l1.5-1.5c1.2-.5 2.5.5 2 1.8l-1.5 1.5M8 4.5L6.5 3c-1.2-.5-2.5.5-2 1.8l1.5 1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>DogTastik</span>
+      </a>
+      
+      <nav class="nav-links">
+        <a href="#home">Home</a>
+        <a href="#samples-section">Samples</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#pricing">Pricing</a>
+      </nav>
+
+      <div class="auth-buttons" id="authNavButtons">
+        <a href="#login" class="btn btn-secondary btn-sm">Sign In</a>
+        <a href="#signup" class="btn btn-primary btn-sm">Get Started</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Processing Spinner Overlay -->
+  <div class="processing-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <h3 id="overlayText">Processing Payment...</h3>
+  </div>
+
+  <main>
+    
+    <!-- 1. LANDING PAGE VIEW -->
+    <div id="homeView" class="app-view active">
+      
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <div class="hero-content">
+          <h1>Your Dog Deserves <span>Their Own Theme Song!</span></h1>
+          <p>We compose customized, catchy jingles and tunes about your dog's unique personality, funny quirks, and favorite nicknames.</p>
+          <div class="hero-buttons">
+            <button class="btn btn-cta" onclick="location.hash='#signup'">Order Custom Jingle</button>
+            <a href="#samples-section" class="btn btn-secondary">Listen to Samples</a>
+          </div>
+        </div>
+        <div class="hero-image-container">
+          <img src="assets/hero_dog.png" alt="Happy dog wearing orange headphones listening to music" class="hero-image">
+        </div>
+      </section>
+
+      <!-- Samples Soundboard Section -->
+      <section id="samples-section">
+        <div class="section-header">
+          <h2>Listen to Our Dog Jingles</h2>
+          <p>Click play on the samples below to hear the kinds of melodies we synthesize for different dog personalities.</p>
+        </div>
+        
+        <div class="samples-grid">
+          <!-- Sample 1 -->
+          <div class="sample-card orange" id="sampleCard-1">
+            <div class="sample-header">
+              <div class="dog-avatar">🐕</div>
+              <div class="sample-info">
+                <h3>Max</h3>
+                <p>Golden Retriever • 2 years old</p>
+              </div>
+            </div>
+            <div class="sample-tags">
+              <span class="tag">Energetic</span>
+              <span class="tag">Friendly</span>
+              <span class="tag">Tennis Balls</span>
+            </div>
+            <p class="sample-lyrics">
+              "Max is zoomin' down the street,
+              Fastest paws you'll ever meet!
+              Chasing yellow tennis balls,
+              He's the happiest pup of all!"
+            </p>
+            <div class="audio-player-container">
+              <button class="play-btn" id="playBtn-1" onclick="app.playSample('energetic', 1)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </button>
+              <div class="audio-progress-bar" onclick="app.seekSample(event, 1)">
+                <div class="audio-progress" id="progress-1"></div>
+              </div>
+              <div class="audio-time" id="time-1">0:10</div>
+            </div>
+          </div>
+
+          <!-- Sample 2 -->
+          <div class="sample-card green" id="sampleCard-2">
+            <div class="sample-header">
+              <div class="dog-avatar">🐩</div>
+              <div class="sample-info">
+                <h3>Bella</h3>
+                <p>Chihuahua • 4 years old</p>
+              </div>
+            </div>
+            <div class="sample-tags">
+              <span class="tag">Sassy</span>
+              <span class="tag">Playful</span>
+              <span class="tag">Peanut Butter</span>
+            </div>
+            <p class="sample-lyrics">
+              "Tiny Bella, full of sass,
+              Ruling over all the grass!
+              Lickin' peanut butter clean,
+              She's the neighborhood's little queen!"
+            </p>
+            <div class="audio-player-container">
+              <button class="play-btn" id="playBtn-2" onclick="app.playSample('playful', 2)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </button>
+              <div class="audio-progress-bar" onclick="app.seekSample(event, 2)">
+                <div class="audio-progress" id="progress-2"></div>
+              </div>
+              <div class="audio-time" id="time-2">0:10</div>
+            </div>
+          </div>
+
+          <!-- Sample 3 -->
+          <div class="sample-card purple" id="sampleCard-3">
+            <div class="sample-header">
+              <div class="dog-avatar">🦮</div>
+              <div class="sample-info">
+                <h3>Rocky</h3>
+                <p>French Bulldog • 5 years old</p>
+              </div>
+            </div>
+            <div class="sample-tags">
+              <span class="tag">Sleepy</span>
+              <span class="tag">Cuddly</span>
+              <span class="tag">Snores</span>
+            </div>
+            <p class="sample-lyrics">
+              "Rocky snoring on the rug,
+              Warm and cozy like a bug.
+              Dreaming of a meaty treat,
+              Sleeping through the summer heat..."
+            </p>
+            <div class="audio-player-container">
+              <button class="play-btn" id="playBtn-3" onclick="app.playSample('sleepy', 3)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </button>
+              <div class="audio-progress-bar" onclick="app.seekSample(event, 3)">
+                <div class="audio-progress" id="progress-3"></div>
+              </div>
+              <div class="audio-time" id="time-3">0:10</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- How It Works Section -->
+      <section id="how-it-works">
+        <div class="section-header">
+          <h2>How It Works</h2>
+          <p>Ordering a custom tune for your dog is quick, simple, and loads of fun.</p>
+        </div>
+
+        <div class="steps-container">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <h3>Choose & Checkout</h3>
+            <p>Pick the package that fits your goal, and pay securely using Stripe.</p>
+          </div>
+          <div class="step-card orange">
+            <div class="step-number">2</div>
+            <h3>Fill Questionnaire</h3>
+            <p>Tell us your dog's name, hobbies, traits, and preferred musical style.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <h3>We Compose the Tune</h3>
+            <p>Our composers craft a customized melody and record the catchy lyrics.</p>
+          </div>
+          <div class="step-card orange">
+            <div class="step-number">4</div>
+            <h3>Receive Jingle!</h3>
+            <p>Download the high-quality file directly from your portal, or listen in email.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pricing Section -->
+      <section id="pricing">
+        <div class="section-header">
+          <h2>Select Your Package</h2>
+          <p>Every jingle is 100% customized to your questionnaire details. Perfect for ringtones, social media, or gifts!</p>
+        </div>
+
+        <div class="pricing-grid">
+          <!-- Package 1 -->
+          <div class="pricing-card">
+            <div class="pricing-header">
+              <h3>The Puppy Jingle</h3>
+              <p>Short & sweet theme song</p>
+            </div>
+            <div class="price">$29<span>/ one-off</span></div>
+            <ul class="pricing-features">
+              <li>
+                <svg viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
+                30-second custom track
+              </li>
+              <li>
+                <svg viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
+                Acoustic or Synth Pop styles
+              </li>
+              <li>
+                <svg viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
+                High-quality MP3 download
+              </li>
+              <li>
+                <svg viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
+                Completed in 3-5 days
+              </li>
+            </ul>
+            <button class="btn btn-secondary" onclick="app.buyPackage('Puppy Jingle', 29)">Choose Basic</button>
+          </div>
+
+          <!-- Package 2 -->
+          <div class="pricing-card popular">
+            <div class="badge-popular">Popular</div>
+            <div class="pricing-header">
+              <h3>The Golden Record</h3>
+              <p>Full length, high-production song</p>
+            </div>
+            <div class="price">$59<span>/ one-off</span></div>
+            <ul class="pricing-features">
+              <li>
+                <svg viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
+                60-second custom track
+              </li>
+              <li>
+                <svg viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
+                Choose any musical genre
+              </li>
+              <li>
+                <svg viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
+                Vocal lyrics and backing tracks
+              </li>
+              <li>
+                <svg viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
+                High-quality WAV/MP3 files
+              </li>
+              <li>
+                <svg viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
+                Completed in 2-3 days
+              </li>
+            </ul>
+            <button class="btn btn-primary" onclick="app.buyPackage('Golden Record', 59)">Get Golden Record</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- 2. LOGIN VIEW -->
+    <div id="loginView" class="app-view">
+      <div class="auth-container">
+        <div class="auth-header">
+          <h2>Welcome Back</h2>
+          <p>Login to track your order and download your jingles.</p>
+        </div>
+        <form id="loginForm" onsubmit="app.handleLogin(event)">
+          <div class="form-group">
+            <label for="loginEmail">Email Address</label>
+            <input type="email" id="loginEmail" placeholder="yourname@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+        </form>
+        <div class="auth-footer">
+          Don't have an account? <a href="#signup">Create Account</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. SIGNUP VIEW -->
+    <div id="signupView" class="app-view">
+      <div class="auth-container">
+        <div class="auth-header">
+          <h2>Create Account</h2>
+          <p>Start your customized dog tune request today.</p>
+        </div>
+        <form id="signupForm" onsubmit="app.handleSignup(event)">
+          <div class="form-group">
+            <label for="signupName">Full Name</label>
+            <input type="text" id="signupName" placeholder="Alex Smith" required>
+          </div>
+          <div class="form-group">
+            <label for="signupEmail">Email Address</label>
+            <input type="email" id="signupEmail" placeholder="yourname@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="signupPassword">Password</label>
+            <input type="password" id="signupPassword" placeholder="Min. 8 characters" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Sign Up</button>
+        </form>
+        <div class="auth-footer">
+          Already have an account? <a href="#login">Sign In</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. STRIPE STRIPE SIMULATOR / CHECKOUT VIEW -->
+    <div id="checkoutView" class="app-view">
+      <div class="checkout-container">
+        <div class="checkout-summary">
+          <h2>Checkout Summary</h2>
+          <p>Package: <strong id="checkoutPackageName">The Golden Record</strong></p>
+          <div class="checkout-price" id="checkoutPriceText">$59</div>
+        </div>
+        <div class="checkout-body">
+          <form id="paymentForm" onsubmit="app.handlePaymentSubmit(event)">
+            <div class="form-group">
+              <label for="cardName">Cardholder Name</label>
+              <input type="text" id="cardName" placeholder="Alex Smith" required>
+            </div>
+            
+            <div class="form-group">
+              <label>Credit or Debit Card</label>
+              <div class="credit-card-inputs">
+                <div class="card-num-row">
+                  <!-- Simple Card SVG -->
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+                  <input type="text" id="cardNumber" placeholder="4242 4242 4242 4242" pattern="[0-9\s]{16,19}" required>
+                </div>
+                <div class="card-meta-row">
+                  <input type="text" id="cardExpiry" placeholder="MM/YY" pattern="(0[1-9]|1[0-2])\/[0-9]{2}" required>
+                  <input type="text" id="cardCvc" placeholder="CVC" pattern="[0-9]{3,4}" required>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-cta checkout-btn">Pay & Continue</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. DOG QUESTIONNAIRE VIEW -->
+    <div id="questionnaireView" class="app-view">
+      <div class="form-container" style="max-width: 650px;">
+        <div class="form-header">
+          <h2>Dog Questionnaire</h2>
+          <p>Tell us about your dog so we can compose the perfect tune!</p>
+        </div>
+        <form id="dogQuestionnaireForm" onsubmit="app.handleQuestionnaireSubmit(event)">
+
+          <!-- 1. Name & Breed -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label for="dogName">Dog's Name</label>
+              <input type="text" id="dogName" placeholder="Rusty" required>
+            </div>
+            <div class="form-group">
+              <label for="dogBreed">Breed</label>
+              <input type="text" id="dogBreed" placeholder="Beagle (or best guess!)" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="dogNickname">Nickname(s) <span style="color: var(--text-muted); font-weight: normal;">(optional)</span></label>
+            <input type="text" id="dogNickname" placeholder="e.g. Rusty-Bear, Big R, Sir Barks-a-lot">
+          </div>
+
+          <!-- 2. Personality traits (pick exactly 3) -->
+          <div class="form-group">
+            <label>Personality — pick exactly 3</label>
+            <p id="personalityCount" style="font-size: 0.8rem; color: var(--text-muted); margin: -4px 0 10px;">0 of 3 selected</p>
+            <div class="trait-groups" id="personalityTraits">
+              <div class="trait-group">
+                <span class="trait-group-label">Playful / Energetic</span>
+                <div class="trait-options">
+                  <label class="trait-chip"><input type="checkbox" value="Goofy">Goofy</label>
+                  <label class="trait-chip"><input type="checkbox" value="Energetic">Energetic</label>
+                  <label class="trait-chip"><input type="checkbox" value="Mischievous">Mischievous</label>
+                  <label class="trait-chip"><input type="checkbox" value="Silly">Silly</label>
+                  <label class="trait-chip"><input type="checkbox" value="Playful">Playful</label>
+                  <label class="trait-chip"><input type="checkbox" value="Adventurous">Adventurous</label>
+                </div>
+              </div>
+              <div class="trait-group">
+                <span class="trait-group-label">Affectionate</span>
+                <div class="trait-options">
+                  <label class="trait-chip"><input type="checkbox" value="Loving">Loving</label>
+                  <label class="trait-chip"><input type="checkbox" value="Cuddly">Cuddly</label>
+                  <label class="trait-chip"><input type="checkbox" value="Loyal">Loyal</label>
+                  <label class="trait-chip"><input type="checkbox" value="Gentle">Gentle</label>
+                  <label class="trait-chip"><input type="checkbox" value="Sweet">Sweet</label>
+                  <label class="trait-chip"><input type="checkbox" value="Affectionate">Affectionate</label>
+                </div>
+              </div>
+              <div class="trait-group">
+                <span class="trait-group-label">Calm / Composed</span>
+                <div class="trait-options">
+                  <label class="trait-chip"><input type="checkbox" value="Chill">Chill</label>
+                  <label class="trait-chip"><input type="checkbox" value="Laid-back">Laid-back</label>
+                  <label class="trait-chip"><input type="checkbox" value="Dignified">Dignified</label>
+                  <label class="trait-chip"><input type="checkbox" value="Independent">Independent</label>
+                  <label class="trait-chip"><input type="checkbox" value="Wise">Wise</label>
+                  <label class="trait-chip"><input type="checkbox" value="Patient">Patient</label>
+                </div>
+              </div>
+              <div class="trait-group">
+                <span class="trait-group-label">Bold / Confident</span>
+                <div class="trait-options">
+                  <label class="trait-chip"><input type="checkbox" value="Brave">Brave</label>
+                  <label class="trait-chip"><input type="checkbox" value="Confident">Confident</label>
+                  <label class="trait-chip"><input type="checkbox" value="Protective">Protective</label>
+                  <label class="trait-chip"><input type="checkbox" value="Stubborn">Stubborn</label>
+                  <label class="trait-chip"><input type="checkbox" value="Fearless">Fearless</label>
+                  <label class="trait-chip"><input type="checkbox" value="Bossy">Bossy</label>
+                </div>
+              </div>
+              <div class="trait-group">
+                <span class="trait-group-label">Quirky / Anxious</span>
+                <div class="trait-options">
+                  <label class="trait-chip"><input type="checkbox" value="Anxious">Anxious</label>
+                  <label class="trait-chip"><input type="checkbox" value="Clingy">Clingy</label>
+                  <label class="trait-chip"><input type="checkbox" value="Dramatic">Dramatic</label>
+                  <label class="trait-chip"><input type="checkbox" value="Nervous">Nervous</label>
+                  <label class="trait-chip"><input type="checkbox" value="Shy">Shy</label>
+                  <label class="trait-chip"><input type="checkbox" value="Quirky">Quirky</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Funniest / most "them" habit -->
+          <div class="form-group">
+            <label for="funnyHabit">Funniest / Most "Them" Habit</label>
+            <textarea id="funnyHabit" placeholder="e.g. always has a toy in their mouth, does the zoomies after baths, tilts their head at every question..." required></textarea>
+          </div>
+
+          <!-- 4 & 5. Loves most / scared of -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label for="favoriteThing">What They Love Most</label>
+              <input type="text" id="favoriteThing" placeholder="e.g. treats, walks, squirrels, belly rubs, car rides..." required>
+            </div>
+            <div class="form-group">
+              <label for="fearOrDislike">What They're Scared Of / Hate</label>
+              <input type="text" id="fearOrDislike" placeholder="e.g. the vacuum, thunderstorms, the mail carrier, baths..." required>
+            </div>
+          </div>
+
+          <!-- 6. Favorite person & relationship -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label for="favoritePerson">Favorite Person</label>
+              <input type="text" id="favoritePerson" placeholder="Dad, Mom, my son Jake..." required>
+            </div>
+            <div class="form-group">
+              <label for="relationshipNote">Relationship Note (optional)</label>
+              <input type="text" id="relationshipNote" placeholder="always follows him around">
+            </div>
+          </div>
+
+          <!-- 7. Signature sound / catchphrase moment -->
+          <div class="form-group">
+            <label>Signature Sound or Catchphrase Moment</label>
+            <div class="trait-options" id="signatureSound">
+              <label class="trait-chip"><input type="checkbox" value="Talks/grumbles with toys in mouth">Talks/grumbles with toys in mouth</label>
+              <label class="trait-chip"><input type="checkbox" value="Howls (at sirens, music, etc.)">Howls (at sirens, music, etc.)</label>
+              <label class="trait-chip"><input type="checkbox" value="Snores loudly">Snores loudly</label>
+              <label class="trait-chip"><input type="checkbox" value="Sighs or groans dramatically">Sighs or groans dramatically</label>
+              <label class="trait-chip"><input type="checkbox" value="Whines/yips with excitement">Whines/yips with excitement</label>
+              <label class="trait-chip"><input type="checkbox" value="Growls playfully during play">Growls playfully during play</label>
+              <label class="trait-chip"><input type="checkbox" value="Barks at something specific (mirror, doorbell, mail carrier)">Barks at something specific (mirror, doorbell, mail carrier)</label>
+            </div>
+            <input type="text" id="signatureSoundOther" placeholder="Other: describe their signature sound" style="margin-top: 10px;">
+          </div>
+
+          <!-- 8. Desired vibe -->
+          <div class="form-group">
+            <label>Desired Vibe</label>
+            <div class="vibe-cards" id="vibeCards">
+              <label class="vibe-card"><input type="radio" name="vibe" value="Silly & Upbeat" required><span>Silly &amp; Upbeat</span></label>
+              <label class="vibe-card"><input type="radio" name="vibe" value="Sweet & Heartfelt"><span>Sweet &amp; Heartfelt</span></label>
+              <label class="vibe-card"><input type="radio" name="vibe" value="Epic Rock Anthem"><span>Epic Rock Anthem</span></label>
+              <label class="vibe-card"><input type="radio" name="vibe" value="Fun Country/Folk Sing-Along"><span>Fun Country/Folk Sing-Along</span></label>
+              <label class="vibe-card"><input type="radio" name="vibe" value="Quirky & Comedic"><span>Quirky &amp; Comedic</span></label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-cta" style="width: 100%;">Submit & Generate Jingle</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 6. CUSTOMER DASHBOARD VIEW -->
+    <div id="dashboardView" class="app-view">
+      <section style="padding-top: 40px;">
+        <div class="section-header" style="margin-bottom: 24px;">
+          <h2>Your Dog Jingle Tracker</h2>
+          <p id="dashboardSub">Manage and listen to tunes about your dog.</p>
+        </div>
+
+        <!-- Status Progress Stepper -->
+        <div class="stepper-container">
+          <div class="stepper-line">
+            <div class="stepper-line-progress" id="stepperProgress"></div>
+          </div>
+          <!-- Node 1 -->
+          <div class="step-node" id="stepNode-1">
+            <div class="step-circle">1</div>
+            <div class="step-label">Ordered</div>
+          </div>
+          <!-- Node 2 -->
+          <div class="step-node" id="stepNode-2">
+            <div class="step-circle">2</div>
+            <div class="step-label">Paid</div>
+          </div>
+          <!-- Node 3 -->
+          <div class="step-node" id="stepNode-3">
+            <div class="step-circle">3</div>
+            <div class="step-label">Details Sent</div>
+          </div>
+          <!-- Node 4 -->
+          <div class="step-node" id="stepNode-4">
+            <div class="step-circle">4</div>
+            <div class="step-label">Composing</div>
+          </div>
+          <!-- Node 5 -->
+          <div class="step-node" id="stepNode-5">
+            <div class="step-circle">5</div>
+            <div class="step-label">Ready!</div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          
+          <!-- Column 1: Order Details -->
+          <div class="dashboard-card">
+            <h3>Dog Profile</h3>
+            <div class="info-list" id="dashboardDogProfile">
+              <!-- Dynamically populated -->
+              <div class="info-item">
+                <label>Dog Name</label>
+                <p>Not submitted yet</p>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" id="editQuestionnaireBtn" style="margin-top: 24px; display: none;" onclick="app.editQuestionnaire()">Edit Questionnaire</button>
+          </div>
+
+          <!-- Column 2: Order Status and Deliverables -->
+          <div class="dashboard-card" id="dashboardDeliverableCard">
+            <h3>Your Custom Tune</h3>
+            <div id="statusPendingInfo" style="text-align: center; padding: 40px 20px;">
+              <div style="font-size: 3rem; margin-bottom: 16px;">🎵</div>
+              <h4 style="margin-bottom: 8px; font-size: 1.2rem;">Composition In Progress</h4>
+              <p style="color: var(--text-muted); font-size: 0.95rem;">
+                Our musicians are looking over your questionnaire and composing your jingle. 
+                You'll receive an email notification as soon as the track is complete!
+              </p>
+            </div>
+
+            <!-- Ready block (hidden by default) -->
+            <div id="statusCompletedInfo" style="display: none;">
+              <div class="jingle-ready-box">
+                <h4>🎉 Your Custom Jingle is Ready!</h4>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">
+                  Your high-quality custom dog jingle is available below. Play it inline or download it for ringtones, videos, and sharing!
+                </p>
+                
+                <div class="audio-player-container large-player">
+                  <button class="play-btn" id="playBtn-dashboard" onclick="app.playCompletedTune()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </button>
+                  <div class="audio-progress-bar" onclick="app.seekCompletedTune(event)">
+                    <div class="audio-progress" id="progress-dashboard"></div>
+                  </div>
+                  <div class="audio-time" id="time-dashboard">0:00</div>
+                </div>
+
+                <a href="#" id="downloadJingleLink" class="btn btn-cta" download="dog_jingle.mp3">Download MP3 File</a>
+
+                <div class="lyrics-display">
+                  <h5 style="font-family: var(--font-header); font-size: 1.2rem; margin-bottom: 12px; text-align: center; color: var(--success);">
+                    Lyrics
+                  </h5>
+                  <div id="lyricsContent">
+                    <!-- Lyrics populated dynamically -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4 style="font-family: var(--font-header); color: white;">DogTastik</h4>
+        <p style="font-size: 0.9rem; margin-top: 10px; line-height: 1.5;">Making the world a happier place, one dog song at a time.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Products</h4>
+        <ul>
+          <li><a href="#pricing">The Puppy Jingle</a></li>
+          <li><a href="#pricing">The Golden Record</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#home">About Us</a></li>
+          <li><a href="#home">FAQ</a></li>
+          <li><a href="admin.html" target="_blank" style="color: var(--cta); font-weight: bold;">Admin Portal</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 DogTastik. All rights reserved.</p>
+      <p>Made with 🐕 for dog lovers everywhere.</p>
+    </div>
+  </footer>
+
+  <!-- JS Scripts -->
+  <script src="synth.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
