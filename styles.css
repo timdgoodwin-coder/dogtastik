@@ -1381,6 +1381,52 @@ footer {
   font-size: 0.85rem;
 }
 
+/* Long-form legal pages (Terms, Privacy, Refund Policy) */
+.legal-content {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.legal-content .updated-date {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 32px;
+}
+
+.legal-content h2 {
+  font-size: 1.4rem;
+  margin-top: 36px;
+  margin-bottom: 12px;
+}
+
+.legal-content h2:first-of-type {
+  margin-top: 0;
+}
+
+.legal-content h3 {
+  font-size: 1.1rem;
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+
+.legal-content p {
+  color: var(--text);
+  margin-bottom: 14px;
+}
+
+.legal-content ul, .legal-content ol {
+  color: var(--text);
+  margin: 0 0 14px 20px;
+}
+
+.legal-content li {
+  margin-bottom: 8px;
+}
+
+.legal-content a {
+  font-weight: 600;
+}
+
 /* Responsive (mobile-first: base styles above target small screens,
    these min-width queries progressively layer on tablet/desktop enhancements) */
 @media (min-width: 640px) {
