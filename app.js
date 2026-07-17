@@ -1,13 +1,26 @@
 // Customer App Logic for DogTastik.com
 
+// Package config: Stripe Payment Links (set "after payment" redirect to
+// https://dogtastik.com/?package=<key>#questionnaire) and Formspree form IDs.
+// Fill in the TODOs once both are created — see plan for setup steps.
+const PACKAGES = {
+  puppy: {
+    name: 'Puppy Jingle',
+    price: 29,
+    stripeLink: 'https://buy.stripe.com/00wfZg4KedTC4yXelE7g400',
+    formspreeId: 'xvzekvpg'
+  },
+  golden: {
+    name: 'Golden Record',
+    price: 59,
+    stripeLink: 'https://buy.stripe.com/fZu9ASb8C16Qd5t0uO7g401',
+    formspreeId: 'xrenpozp'
+  }
+};
+
 class DogTastikApp {
   constructor() {
-    this.currentUser = null;
-    this.currentOrder = null;
     this.activeSampleIndex = null;
-    this.dashboardAudio = null; // HTML Audio object for uploaded tunes
-    this.dashboardAudioPlaying = false;
-    this.dashboardAudioInterval = null;
 
     // Maps a personality trait to the vibe it most suggests (used to highlight a suggested vibe card)
     this.TRAIT_TO_VIBE = {
@@ -33,11 +46,21 @@ class DogTastikApp {
   }
 
   init() {
-    this.loadSession();
+    this.handleStripeReturn();
     this.handleRouting();
-    this.updateNav();
     this.setupQuestionnaireInteractions();
     this.setupMobileNav();
+  }
+
+  // Landing back from a Stripe Payment Link (?package=puppy|golden). Remembers
+  // which package was bought so the questionnaire can build the order once
+  // submitted, then strips the query param so a refresh doesn't re-trigger it.
+  handleStripeReturn() {
+    const key = new URLSearchParams(location.search).get('package');
+    if (!key || !PACKAGES[key]) return;
+
+    sessionStorage.setItem('pending_package', key);
+    history.replaceState(null, '', location.pathname + location.hash);
   }
 
   // Mobile hamburger menu: toggle open/closed, close on link click or outside tap
@@ -104,14 +127,6 @@ class DogTastikApp {
   }
 
   // Database / LocalStorage Helpers
-  getUsers() {
-    return JSON.parse(localStorage.getItem('dogtastik_users') || '[]');
-  }
-
-  saveUsers(users) {
-    localStorage.setItem('dogtastik_users', JSON.stringify(users));
-  }
-
   getOrders() {
     return JSON.parse(localStorage.getItem('dogtastik_orders') || '[]');
   }
@@ -120,77 +135,25 @@ class DogTastikApp {
     localStorage.setItem('dogtastik_orders', JSON.stringify(orders));
   }
 
-  loadSession() {
-    const session = localStorage.getItem('dogtastik_session');
-    if (session) {
-      this.currentUser = JSON.parse(session);
-      // Fetch latest active order for this user
-      const orders = this.getOrders();
-      this.currentOrder = orders.find(o => o.customerEmail === this.currentUser.email && o.status !== 'completed_delivered') || 
-                          orders.reverse().find(o => o.customerEmail === this.currentUser.email) || null;
-    }
-  }
-
-  saveSession(user) {
-    this.currentUser = user;
-    localStorage.setItem('dogtastik_session', JSON.stringify(user));
-    this.updateNav();
-  }
-
-  clearSession() {
-    this.currentUser = null;
-    this.currentOrder = null;
-    localStorage.removeItem('dogtastik_session');
-    if (this.dashboardAudio) {
-      this.dashboardAudio.pause();
-      this.dashboardAudio = null;
-    }
-    window.dogJingleSynth.stop();
-    this.updateNav();
-    location.hash = '#home';
-  }
-
   // Client-Side Routing
   handleRouting() {
     const hash = location.hash || '#home';
-    const views = ['homeView', 'loginView', 'signupView', 'checkoutView', 'questionnaireView', 'dashboardView'];
-    
+    const views = ['homeView', 'questionnaireView', 'thankyouView'];
+
     // Stop any playing synth audio on route change
     window.dogJingleSynth.stop();
     this.resetSamplePlayButtons();
 
     // Route guards
-    if (hash === '#checkout' && !this.currentUser) {
-      location.hash = '#login';
+    if (hash === '#questionnaire' && !sessionStorage.getItem('pending_package')) {
+      location.hash = '#pricing';
       return;
-    }
-
-    if (hash === '#questionnaire') {
-      if (!this.currentUser) {
-        location.hash = '#login';
-        return;
-      }
-      if (!this.currentOrder || this.currentOrder.status === 'placed') {
-        location.hash = '#pricing';
-        return;
-      }
-    }
-
-    if (hash === '#dashboard') {
-      if (!this.currentUser) {
-        location.hash = '#login';
-        return;
-      }
-      this.renderDashboard();
     }
 
     // Swapping view visibility
     let activeView = 'homeView';
-    if (hash === '#login') activeView = 'loginView';
-    else if (hash === '#signup') activeView = 'signupView';
-    else if (hash === '#checkout') activeView = 'checkoutView';
-    else if (hash === '#questionnaire') activeView = 'questionnaireView';
-    else if (hash === '#dashboard') activeView = 'dashboardView';
+    if (hash === '#questionnaire') activeView = 'questionnaireView';
+    else if (hash === '#thankyou') activeView = 'thankyouView';
 
     views.forEach(v => {
       const el = document.getElementById(v);
@@ -205,25 +168,6 @@ class DogTastikApp {
 
     // Scroll to top of window
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  // Navigation UI updates
-  updateNav() {
-    const authNav = document.getElementById('authNavButtons');
-    if (!authNav) return;
-
-    if (this.currentUser) {
-      authNav.innerHTML = `
-        <span style="font-weight: 500; font-size: 0.9rem; color: var(--text-muted);">Hi, ${this.currentUser.name}</span>
-        <a href="#dashboard" class="btn btn-secondary btn-sm">Dashboard</a>
-        <button onclick="app.clearSession()" class="btn btn-primary btn-sm">Sign Out</button>
-      `;
-    } else {
-      authNav.innerHTML = `
-        <a href="#login" class="btn btn-secondary btn-sm">Sign In</a>
-        <a href="#signup" class="btn btn-primary btn-sm">Get Started</a>
-      `;
-    }
   }
 
   // Interactive Samples Playback
@@ -328,131 +272,23 @@ class DogTastikApp {
     this.playSample(index);
   }
 
-  // E-commerce checkout trigger
-  buyPackage(packageName, price) {
-    if (!this.currentUser) {
-      location.hash = '#login';
-      return;
-    }
-
-    // Store package details for checkout page
-    sessionStorage.setItem('pending_package', JSON.stringify({ name: packageName, price: price }));
-    
-    // Update checkout UI details
-    document.getElementById('checkoutPackageName').textContent = packageName;
-    document.getElementById('checkoutPriceText').textContent = `$${price}`;
-    
-    location.hash = '#checkout';
-  }
-
-  // Handle Authentication
-  handleSignup(event) {
-    event.preventDefault();
-    const name = document.getElementById('signupName').value;
-    const email = document.getElementById('signupEmail').value;
-    const password = document.getElementById('signupPassword').value;
-
-    const users = this.getUsers();
-    if (users.find(u => u.email === email)) {
-      alert('An account with this email already exists.');
-      return;
-    }
-
-    const newUser = { name, email, password };
-    users.push(newUser);
-    this.saveUsers(users);
-
-    this.saveSession(newUser);
-    
-    // Check if there was a package pending checkout
-    const pending = sessionStorage.getItem('pending_package');
-    if (pending) {
-      const pkg = JSON.parse(pending);
-      this.buyPackage(pkg.name, pkg.price);
-    } else {
-      location.hash = '#home';
-    }
-  }
-
-  handleLogin(event) {
-    event.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-
-    const users = this.getUsers();
-    const user = users.find(u => u.email === email && u.password === password);
-
-    if (!user) {
-      alert('Invalid email or password.');
-      return;
-    }
-
-    this.saveSession(user);
-
-    const pending = sessionStorage.getItem('pending_package');
-    if (pending) {
-      const pkg = JSON.parse(pending);
-      this.buyPackage(pkg.name, pkg.price);
-    } else {
-      // Load current order if they already have one
-      const orders = this.getOrders();
-      const userOrder = orders.find(o => o.customerEmail === email && o.status !== 'completed_delivered');
-      if (userOrder) {
-        location.hash = '#dashboard';
-      } else {
-        location.hash = '#home';
-      }
-    }
-  }
-
-  // Handle Payments (Stripe Simulator)
-  handlePaymentSubmit(event) {
-    event.preventDefault();
-    const overlay = document.getElementById('loadingOverlay');
-    const overlayText = document.getElementById('overlayText');
-    
-    overlayText.textContent = "Connecting to Stripe...";
-    overlay.style.display = 'flex';
-
-    setTimeout(() => {
-      overlayText.textContent = "Authorizing credit card...";
-      
-      setTimeout(() => {
-        // Payment successful
-        overlay.style.display = 'none';
-        
-        const pending = JSON.parse(sessionStorage.getItem('pending_package') || '{"name":"The Golden Record","price":59}');
-        sessionStorage.removeItem('pending_package');
-
-        // Create new order record
-        const orders = this.getOrders();
-        const newOrder = {
-          id: 'DT-' + Math.floor(100000 + Math.random() * 90000),
-          customerEmail: this.currentUser.email,
-          customerName: this.currentUser.name,
-          packageName: pending.name,
-          price: pending.price,
-          status: 'paid',
-          date: new Date().toLocaleDateString(),
-          dogDetails: null,
-          jingleFile: null,
-          lyrics: ''
-        };
-
-        orders.push(newOrder);
-        this.saveOrders(orders);
-        this.currentOrder = newOrder;
-
-        location.hash = '#questionnaire';
-      }, 1500);
-
-    }, 1000);
+  // E-commerce checkout trigger — sends the customer to the real Stripe Payment Link
+  buyPackage(key) {
+    sessionStorage.setItem('pending_package', key);
+    window.location.href = PACKAGES[key].stripeLink;
   }
 
   // Handle Dog Questionnaire Submission
   handleQuestionnaireSubmit(event) {
     event.preventDefault();
-    if (!this.currentOrder) return;
+    const packageKey = sessionStorage.getItem('pending_package');
+    if (!packageKey || !PACKAGES[packageKey]) {
+      location.hash = '#pricing';
+      return;
+    }
+
+    const ownerName = document.getElementById('ownerName').value;
+    const ownerEmail = document.getElementById('ownerEmail').value;
 
     const personalityTraits = Array.from(document.querySelectorAll('#personalityTraits input:checked')).map(el => el.value);
     if (personalityTraits.length !== 3) {
@@ -488,345 +324,55 @@ class DogTastikApp {
       vibe: vibeInput.value
     };
 
+    const pkg = PACKAGES[packageKey];
+    const newOrder = {
+      id: 'DT-' + Math.floor(100000 + Math.random() * 90000),
+      customerName: ownerName,
+      customerEmail: ownerEmail,
+      packageName: pkg.name,
+      packageKey: packageKey,
+      price: pkg.price,
+      status: 'questionnaire',
+      date: new Date().toLocaleDateString(),
+      dogDetails: dogDetails,
+      jingleFile: null,
+      lyrics: ''
+    };
+
     const orders = this.getOrders();
-    const orderIdx = orders.findIndex(o => o.id === this.currentOrder.id);
-    
-    if (orderIdx !== -1) {
-      orders[orderIdx].dogDetails = dogDetails;
-      orders[orderIdx].status = 'questionnaire'; // details submitted
-      this.saveOrders(orders);
-      this.currentOrder = orders[orderIdx];
-    }
+    orders.push(newOrder);
+    this.saveOrders(orders);
+
+    this.sendQuestionnaireToFormspree(newOrder);
+    sessionStorage.removeItem('pending_package');
 
     // Reset questionnaire form
     document.getElementById('dogQuestionnaireForm').reset();
-    location.hash = '#dashboard';
+    location.hash = '#thankyou';
   }
 
-  // Populate Customer Dashboard
-  renderDashboard() {
-    if (!this.currentUser) return;
-    
-    const orders = this.getOrders();
-    // Fetch latest active order
-    this.currentOrder = orders.find(o => o.customerEmail === this.currentUser.email && o.status !== 'completed_delivered') || 
-                        orders.reverse().find(o => o.customerEmail === this.currentUser.email) || null;
-
-    const profileCard = document.getElementById('dashboardDogProfile');
-    const editBtn = document.getElementById('editQuestionnaireBtn');
-    
-    // Stop any ongoing dashboard playing audio
-    if (this.dashboardAudio) {
-      this.dashboardAudio.pause();
-      this.dashboardAudio = null;
-      this.dashboardAudioPlaying = false;
-      this.updateDashboardPlayBtn();
-    }
-    
-    if (!this.currentOrder) {
-      document.getElementById('dashboardSub').textContent = "No orders found.";
-      profileCard.innerHTML = `<div class="info-item"><p>Select a package on the home page to start!</p></div>`;
-      this.updateStepper('none');
-      document.getElementById('statusPendingInfo').style.display = 'block';
-      document.getElementById('statusCompletedInfo').style.display = 'none';
+  // Emails the questionnaire answers to the business inbox via Formspree, routed
+  // to the form for the package that was purchased. Non-blocking — a failure here
+  // shouldn't stop the customer from reaching the thank-you page.
+  sendQuestionnaireToFormspree(order) {
+    const formspreeId = PACKAGES[order.packageKey].formspreeId;
+    if (!formspreeId) {
+      console.warn('No Formspree form configured for package', order.packageName);
       return;
     }
 
-    document.getElementById('dashboardSub').textContent = `Order ID: ${this.currentOrder.id} • Package: ${this.currentOrder.packageName}`;
-    
-    // Render Dog Profile details
-    if (this.currentOrder.dogDetails) {
-      editBtn.style.display = 'inline-block';
-      const details = this.currentOrder.dogDetails;
-
-      const traitsHTML = details.personality_traits.map(t => `<span class="tag">${t}</span>`).join('');
-      const signatureSounds = [...details.signature_sound, details.signature_sound_other].filter(Boolean).join(', ');
-
-      profileCard.innerHTML = `
-        <div class="info-item">
-          <label>Dog Name</label>
-          <p>🐾 ${details.dog_name}</p>
-        </div>
-        <div class="info-item">
-          <label>Breed</label>
-          <p>${details.dog_breed}</p>
-        </div>
-        ${details.dog_nickname ? `
-        <div class="info-item">
-          <label>Nickname(s)</label>
-          <p>${details.dog_nickname}</p>
-        </div>
-        ` : ''}
-        <div class="info-item">
-          <label>Desired Vibe</label>
-          <p style="font-weight: bold; color: var(--primary);">${details.vibe}</p>
-        </div>
-        <div class="info-item">
-          <label>Personality</label>
-          <div class="tags-list">${traitsHTML}</div>
-        </div>
-        <div class="info-item">
-          <label>Funniest Habit</label>
-          <p>${details.funny_habit}</p>
-        </div>
-        <div class="info-item" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-          <div>
-            <label>Loves Most</label>
-            <p>${details.favorite_thing}</p>
-          </div>
-          <div>
-            <label>Scared Of / Hates</label>
-            <p>${details.fear_or_dislike}</p>
-          </div>
-        </div>
-        <div class="info-item">
-          <label>Favorite Person</label>
-          <p>${details.favorite_person}${details.relationship_note ? ` — ${details.relationship_note}` : ''}</p>
-        </div>
-        ${signatureSounds ? `
-        <div class="info-item">
-          <label>Signature Sound</label>
-          <p>${signatureSounds}</p>
-        </div>
-        ` : ''}
-      `;
-    } else {
-      editBtn.style.display = 'none';
-      profileCard.innerHTML = `
-        <div class="info-item">
-          <label>Dog Name</label>
-          <p>Details Not Submitted</p>
-          <a href="#questionnaire" class="btn btn-cta btn-sm" style="margin-top: 12px;">Fill Questionnaire</a>
-        </div>
-      `;
-    }
-
-    // Update progress stepper
-    this.updateStepper(this.currentOrder.status);
-
-    // Update deliverable card
-    const pendingCard = document.getElementById('statusPendingInfo');
-    const completedCard = document.getElementById('statusCompletedInfo');
-
-    if (this.currentOrder.status === 'ready') {
-      pendingCard.style.display = 'none';
-      completedCard.style.display = 'block';
-
-      // Setup lyrics and download URL
-      document.getElementById('lyricsContent').innerHTML = this.currentOrder.lyrics ? 
-        this.currentOrder.lyrics.replace(/\n/g, '<br>') : 'No lyrics sheets provided.';
-      
-      const downloadBtn = document.getElementById('downloadJingleLink');
-      if (this.currentOrder.jingleFile) {
-        downloadBtn.href = this.currentOrder.jingleFile;
-        downloadBtn.style.display = 'inline-flex';
-      } else {
-        // Synth only, hide file download since it is code synthesized
-        downloadBtn.style.display = 'none';
-      }
-    } else {
-      pendingCard.style.display = 'block';
-      completedCard.style.display = 'none';
-      
-      // Update text descriptive to exact current status
-      const descHeading = pendingCard.querySelector('h4');
-      const descText = pendingCard.querySelector('p');
-
-      if (this.currentOrder.status === 'paid') {
-        descHeading.textContent = "Questionnaire Needed";
-        descText.innerHTML = `Your payment of $${this.currentOrder.price} was received successfully. <br>Please <a href="#questionnaire" style="font-weight:600;">fill out the questionnaire</a> about your dog so we can start composing!`;
-      } else if (this.currentOrder.status === 'questionnaire') {
-        descHeading.textContent = "Order Received";
-        descText.textContent = "Thank you! We've received your dog's profile. We are assigning your order to our song composers now.";
-      } else if (this.currentOrder.status === 'composing') {
-        descHeading.textContent = "Composing Your Tune";
-        descText.textContent = "Our composers are actively recording and tweaking the melodies for your dog. Your tune will be ready soon!";
-      }
-    }
-  }
-
-  // Edit questionnaire handler
-  editQuestionnaire() {
-    if (!this.currentOrder || !this.currentOrder.dogDetails) return;
-    const details = this.currentOrder.dogDetails;
-
-    document.getElementById('dogName').value = details.dog_name;
-    document.getElementById('dogBreed').value = details.dog_breed;
-    document.getElementById('dogNickname').value = details.dog_nickname || '';
-    document.getElementById('funnyHabit').value = details.funny_habit;
-    document.getElementById('favoriteThing').value = details.favorite_thing;
-    document.getElementById('fearOrDislike').value = details.fear_or_dislike;
-    document.getElementById('favoritePerson').value = details.favorite_person;
-    document.getElementById('relationshipNote').value = details.relationship_note || '';
-    document.getElementById('signatureSoundOther').value = details.signature_sound_other || '';
-
-    document.querySelectorAll('#personalityTraits input[type="checkbox"]').forEach(cb => {
-      cb.checked = details.personality_traits.includes(cb.value);
-      cb.disabled = false;
-    });
-    document.getElementById('personalityCount').textContent = `${details.personality_traits.length} of 3 selected`;
-    this.updateVibeSuggestion(details.personality_traits);
-
-    document.querySelectorAll('#signatureSound input[type="checkbox"]').forEach(cb => {
-      cb.checked = details.signature_sound.includes(cb.value);
-    });
-
-    document.querySelectorAll('input[name="vibe"]').forEach(radio => {
-      radio.checked = radio.value === details.vibe;
-    });
-
-    location.hash = '#questionnaire';
-  }
-
-  // Stepper Visual Updates
-  updateStepper(status) {
-    const nodes = [
-      { id: 'stepNode-1', stat: ['placed', 'paid', 'questionnaire', 'composing', 'ready'] },
-      { id: 'stepNode-2', stat: ['paid', 'questionnaire', 'composing', 'ready'] },
-      { id: 'stepNode-3', stat: ['questionnaire', 'composing', 'ready'] },
-      { id: 'stepNode-4', stat: ['composing', 'ready'] },
-      { id: 'stepNode-5', stat: ['ready'] }
-    ];
-
-    let progressPct = 0;
-    if (status === 'placed') progressPct = 0;
-    else if (status === 'paid') progressPct = 25;
-    else if (status === 'questionnaire') progressPct = 50;
-    else if (status === 'composing') progressPct = 75;
-    else if (status === 'ready') progressPct = 100;
-
-    document.getElementById('stepperProgress').style.width = `${progressPct}%`;
-
-    nodes.forEach((node, idx) => {
-      const el = document.getElementById(node.id);
-      if (!el) return;
-
-      if (status === 'none') {
-        el.className = 'step-node';
-        return;
-      }
-
-      el.classList.remove('active', 'completed');
-      
-      const nodeStatusIndex = node.stat.indexOf(status);
-      
-      if (nodeStatusIndex > 0) {
-        el.classList.add('completed');
-      } else if (nodeStatusIndex === 0) {
-        el.classList.add('active');
-      }
-    });
-  }
-
-  // Dashboard Completed Tune Player
-  playCompletedTune() {
-    if (!this.currentOrder || this.currentOrder.status !== 'ready') return;
-    
-    const playBtn = document.getElementById('playBtn-dashboard');
-    const progressBar = document.getElementById('progress-dashboard');
-    const timeDisplay = document.getElementById('time-dashboard');
-
-    // Case 1: Custom audio file uploaded by Admin
-    if (this.currentOrder.jingleFile) {
-      if (this.dashboardAudioPlaying) {
-        this.dashboardAudio.pause();
-        this.dashboardAudioPlaying = false;
-        this.updateDashboardPlayBtn();
-        if (this.dashboardAudioInterval) clearInterval(this.dashboardAudioInterval);
-        return;
-      }
-
-      if (!this.dashboardAudio) {
-        this.dashboardAudio = new Audio(this.currentOrder.jingleFile);
-        this.dashboardAudio.addEventListener('ended', () => {
-          this.dashboardAudioPlaying = false;
-          this.updateDashboardPlayBtn();
-          progressBar.style.width = '0%';
-          timeDisplay.textContent = '0:00';
-          if (this.dashboardAudioInterval) clearInterval(this.dashboardAudioInterval);
-        });
-      }
-
-      this.dashboardAudio.play();
-      this.dashboardAudioPlaying = true;
-      this.updateDashboardPlayBtn();
-
-      // Track progress
-      this.dashboardAudioInterval = setInterval(() => {
-        const duration = this.dashboardAudio.duration || 10;
-        const current = this.dashboardAudio.currentTime;
-        const pct = (current / duration) * 100;
-        progressBar.style.width = `${pct}%`;
-        
-        const m = Math.floor(current / 60);
-        const s = Math.floor(current % 60).toString().padStart(2, '0');
-        timeDisplay.textContent = `${m}:${s}`;
-      }, 100);
-
-    } else {
-      // Case 2: Fallback to interactive synthesis based on selected vibe
-      const vibe = this.currentOrder.dogDetails ? this.currentOrder.dogDetails.vibe : null;
-      const synthMethod = this.VIBE_TO_SYNTH[vibe] || 'playEnergetic';
-
-      if (window.dogJingleSynth.isPlaying) {
-        window.dogJingleSynth.stop();
-        this.dashboardAudioPlaying = false;
-        this.updateDashboardPlayBtn();
-        progressBar.style.width = '0%';
-        timeDisplay.textContent = '0:00';
-        return;
-      }
-
-      this.dashboardAudioPlaying = true;
-      this.updateDashboardPlayBtn();
-
-      const progressCallback = (pct) => {
-        progressBar.style.width = `${pct}%`;
-        const secs = Math.floor((pct / 100) * 10);
-        timeDisplay.textContent = `0:${secs.toString().padStart(2, '0')}`;
-      };
-
-      const endedCallback = () => {
-        this.dashboardAudioPlaying = false;
-        this.updateDashboardPlayBtn();
-        progressBar.style.width = '0%';
-        timeDisplay.textContent = '0:00';
-      };
-
-      window.dogJingleSynth[synthMethod](progressCallback, endedCallback);
-    }
-  }
-
-  updateDashboardPlayBtn() {
-    const playBtn = document.getElementById('playBtn-dashboard');
-    if (!playBtn) return;
-
-    if (this.dashboardAudioPlaying) {
-      playBtn.innerHTML = `
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-        </svg>
-      `;
-    } else {
-      playBtn.innerHTML = `
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M8 5v14l11-7z"/>
-        </svg>
-      `;
-    }
-  }
-
-  seekCompletedTune(event) {
-    if (!this.dashboardAudio) return;
-    const bar = event.currentTarget;
-    const rect = bar.getBoundingClientRect();
-    const clickX = event.clientX - rect.left;
-    const width = rect.width;
-    const pct = clickX / width;
-    
-    if (this.currentOrder.jingleFile && this.dashboardAudio) {
-      this.dashboardAudio.currentTime = pct * this.dashboardAudio.duration;
-    }
+    fetch(`https://formspree.io/f/${formspreeId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        order_id: order.id,
+        package: order.packageName,
+        price: order.price,
+        customer_name: order.customerName,
+        customer_email: order.customerEmail,
+        ...order.dogDetails
+      })
+    }).catch(err => console.warn('Formspree submission failed', err));
   }
 }
 

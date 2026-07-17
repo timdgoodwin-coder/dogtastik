@@ -41,18 +41,11 @@
         </nav>
 
         <div class="auth-buttons" id="authNavButtons">
-          <a href="#login" class="btn btn-secondary btn-sm">Sign In</a>
-          <a href="#signup" class="btn btn-primary btn-sm">Get Started</a>
+          <a href="#pricing" class="btn btn-cta btn-sm">Order Custom Jingle</a>
         </div>
       </div>
     </div>
   </header>
-
-  <!-- Processing Spinner Overlay -->
-  <div class="processing-overlay" id="loadingOverlay">
-    <div class="spinner"></div>
-    <h3 id="overlayText">Processing Payment...</h3>
-  </div>
 
   <main>
     
@@ -65,7 +58,7 @@
           <h1>Your Dog Deserves <span>Their Own Theme Song!</span></h1>
           <p>We compose customized, catchy jingles and tunes about your dog's unique personality, funny quirks, and favorite nicknames.</p>
           <div class="hero-buttons">
-            <button class="btn btn-cta" onclick="location.hash='#signup'">Order Custom Jingle</button>
+            <button class="btn btn-cta" onclick="location.hash='#pricing'">Order Custom Jingle</button>
             <a href="#samples-section" class="btn btn-secondary">Listen to Samples</a>
           </div>
         </div>
@@ -247,7 +240,7 @@
                 Completed in 3-5 days
               </li>
             </ul>
-            <button class="btn btn-secondary" onclick="app.buyPackage('Puppy Jingle', 29)">Choose Basic</button>
+            <button class="btn btn-secondary" onclick="app.buyPackage('puppy')">Choose Basic</button>
           </div>
 
           <!-- Package 2 -->
@@ -280,102 +273,14 @@
                 Completed in 2-3 days
               </li>
             </ul>
-            <button class="btn btn-primary" onclick="app.buyPackage('Golden Record', 59)">Get Golden Record</button>
+            <button class="btn btn-primary" onclick="app.buyPackage('golden')">Get Golden Record</button>
           </div>
         </div>
       </section>
 
     </div>
 
-    <!-- 2. LOGIN VIEW -->
-    <div id="loginView" class="app-view">
-      <div class="auth-container">
-        <div class="auth-header">
-          <h2>Welcome Back</h2>
-          <p>Login to track your order and download your jingles.</p>
-        </div>
-        <form id="loginForm" onsubmit="app.handleLogin(event)">
-          <div class="form-group">
-            <label for="loginEmail">Email Address</label>
-            <input type="email" id="loginEmail" placeholder="yourname@example.com" required>
-          </div>
-          <div class="form-group">
-            <label for="loginPassword">Password</label>
-            <input type="password" id="loginPassword" placeholder="••••••••" required>
-          </div>
-          <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
-        </form>
-        <div class="auth-footer">
-          Don't have an account? <a href="#signup">Create Account</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. SIGNUP VIEW -->
-    <div id="signupView" class="app-view">
-      <div class="auth-container">
-        <div class="auth-header">
-          <h2>Create Account</h2>
-          <p>Start your customized dog tune request today.</p>
-        </div>
-        <form id="signupForm" onsubmit="app.handleSignup(event)">
-          <div class="form-group">
-            <label for="signupName">Full Name</label>
-            <input type="text" id="signupName" placeholder="Alex Smith" required>
-          </div>
-          <div class="form-group">
-            <label for="signupEmail">Email Address</label>
-            <input type="email" id="signupEmail" placeholder="yourname@example.com" required>
-          </div>
-          <div class="form-group">
-            <label for="signupPassword">Password</label>
-            <input type="password" id="signupPassword" placeholder="Min. 8 characters" required>
-          </div>
-          <button type="submit" class="btn btn-primary" style="width: 100%;">Sign Up</button>
-        </form>
-        <div class="auth-footer">
-          Already have an account? <a href="#login">Sign In</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- 4. STRIPE STRIPE SIMULATOR / CHECKOUT VIEW -->
-    <div id="checkoutView" class="app-view">
-      <div class="checkout-container">
-        <div class="checkout-summary">
-          <h2>Checkout Summary</h2>
-          <p>Package: <strong id="checkoutPackageName">The Golden Record</strong></p>
-          <div class="checkout-price" id="checkoutPriceText">$59</div>
-        </div>
-        <div class="checkout-body">
-          <form id="paymentForm" onsubmit="app.handlePaymentSubmit(event)">
-            <div class="form-group">
-              <label for="cardName">Cardholder Name</label>
-              <input type="text" id="cardName" placeholder="Alex Smith" required>
-            </div>
-            
-            <div class="form-group">
-              <label>Credit or Debit Card</label>
-              <div class="credit-card-inputs">
-                <div class="card-num-row">
-                  <!-- Simple Card SVG -->
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
-                  <input type="text" id="cardNumber" placeholder="4242 4242 4242 4242" pattern="[0-9\s]{16,19}" required>
-                </div>
-                <div class="card-meta-row">
-                  <input type="text" id="cardExpiry" placeholder="MM/YY" pattern="(0[1-9]|1[0-2])\/[0-9]{2}" required>
-                  <input type="text" id="cardCvc" placeholder="CVC" pattern="[0-9]{3,4}" required>
-                </div>
-              </div>
-            </div>
-
-            <button type="submit" class="btn btn-cta checkout-btn">Pay & Continue</button>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- 5. DOG QUESTIONNAIRE VIEW -->
+    <!-- 2. DOG QUESTIONNAIRE VIEW -->
     <div id="questionnaireView" class="app-view">
       <div class="form-container" style="max-width: 650px;">
         <div class="form-header">
@@ -383,6 +288,18 @@
           <p>Tell us about your dog so we can compose the perfect tune!</p>
         </div>
         <form id="dogQuestionnaireForm" onsubmit="app.handleQuestionnaireSubmit(event)">
+
+          <!-- 0. Your Info -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label for="ownerName">Your Name</label>
+              <input type="text" id="ownerName" placeholder="Alex Smith" required>
+            </div>
+            <div class="form-group">
+              <label for="ownerEmail">Your Email</label>
+              <input type="email" id="ownerEmail" placeholder="yourname@example.com" required>
+            </div>
+          </div>
 
           <!-- 1. Name & Breed -->
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
@@ -526,110 +443,16 @@
       </div>
     </div>
 
-    <!-- 6. CUSTOMER DASHBOARD VIEW -->
-    <div id="dashboardView" class="app-view">
-      <section style="padding-top: 40px;">
-        <div class="section-header" style="margin-bottom: 24px;">
-          <h2>Your Dog Jingle Tracker</h2>
-          <p id="dashboardSub">Manage and listen to tunes about your dog.</p>
+    <!-- 3. THANK YOU VIEW -->
+    <div id="thankyouView" class="app-view">
+      <div class="form-container" style="max-width: 550px; text-align: center;">
+        <div class="section-header">
+          <div style="font-size: 3rem; margin-bottom: 16px;">🎉</div>
+          <h2>Thanks — your order is in!</h2>
+          <p id="thankyouSub">We've got your dog's profile and we're getting started on their jingle. We'll email your finished track within a few days.</p>
         </div>
-
-        <!-- Status Progress Stepper -->
-        <div class="stepper-container">
-          <div class="stepper-line">
-            <div class="stepper-line-progress" id="stepperProgress"></div>
-          </div>
-          <!-- Node 1 -->
-          <div class="step-node" id="stepNode-1">
-            <div class="step-circle">1</div>
-            <div class="step-label">Ordered</div>
-          </div>
-          <!-- Node 2 -->
-          <div class="step-node" id="stepNode-2">
-            <div class="step-circle">2</div>
-            <div class="step-label">Paid</div>
-          </div>
-          <!-- Node 3 -->
-          <div class="step-node" id="stepNode-3">
-            <div class="step-circle">3</div>
-            <div class="step-label">Details Sent</div>
-          </div>
-          <!-- Node 4 -->
-          <div class="step-node" id="stepNode-4">
-            <div class="step-circle">4</div>
-            <div class="step-label">Composing</div>
-          </div>
-          <!-- Node 5 -->
-          <div class="step-node" id="stepNode-5">
-            <div class="step-circle">5</div>
-            <div class="step-label">Ready!</div>
-          </div>
-        </div>
-
-        <div class="dashboard-grid">
-          
-          <!-- Column 1: Order Details -->
-          <div class="dashboard-card">
-            <h3>Dog Profile</h3>
-            <div class="info-list" id="dashboardDogProfile">
-              <!-- Dynamically populated -->
-              <div class="info-item">
-                <label>Dog Name</label>
-                <p>Not submitted yet</p>
-              </div>
-            </div>
-            <button class="btn btn-secondary btn-sm" id="editQuestionnaireBtn" style="margin-top: 24px; display: none;" onclick="app.editQuestionnaire()">Edit Questionnaire</button>
-          </div>
-
-          <!-- Column 2: Order Status and Deliverables -->
-          <div class="dashboard-card" id="dashboardDeliverableCard">
-            <h3>Your Custom Tune</h3>
-            <div id="statusPendingInfo" style="text-align: center; padding: 40px 20px;">
-              <div style="font-size: 3rem; margin-bottom: 16px;">🎵</div>
-              <h4 style="margin-bottom: 8px; font-size: 1.2rem;">Composition In Progress</h4>
-              <p style="color: var(--text-muted); font-size: 0.95rem;">
-                Our musicians are looking over your questionnaire and composing your jingle. 
-                You'll receive an email notification as soon as the track is complete!
-              </p>
-            </div>
-
-            <!-- Ready block (hidden by default) -->
-            <div id="statusCompletedInfo" style="display: none;">
-              <div class="jingle-ready-box">
-                <h4>🎉 Your Custom Jingle is Ready!</h4>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">
-                  Your high-quality custom dog jingle is available below. Play it inline or download it for ringtones, videos, and sharing!
-                </p>
-                
-                <div class="audio-player-container large-player">
-                  <button class="play-btn" id="playBtn-dashboard" onclick="app.playCompletedTune()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M8 5v14l11-7z"/>
-                    </svg>
-                  </button>
-                  <div class="audio-progress-bar" onclick="app.seekCompletedTune(event)">
-                    <div class="audio-progress" id="progress-dashboard"></div>
-                  </div>
-                  <div class="audio-time" id="time-dashboard">0:00</div>
-                </div>
-
-                <a href="#" id="downloadJingleLink" class="btn btn-cta" download="dog_jingle.mp3">Download MP3 File</a>
-
-                <div class="lyrics-display">
-                  <h5 style="font-family: var(--font-header); font-size: 1.2rem; margin-bottom: 12px; text-align: center; color: var(--success);">
-                    Lyrics
-                  </h5>
-                  <div id="lyricsContent">
-                    <!-- Lyrics populated dynamically -->
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-      </section>
+        <a href="#home" class="btn btn-secondary" style="margin-top: 12px;">Back to Home</a>
+      </div>
     </div>
 
   </main>
