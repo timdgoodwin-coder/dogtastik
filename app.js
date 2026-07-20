@@ -52,6 +52,27 @@ class DogTastikApp {
     this.setupMobileNav();
   }
 
+  // The Desired Vibe question is a Golden Record perk — Puppy Jingle buyers don't
+  // pick a vibe (we choose one for them). Hide the section and drop its `required`
+  // radio for anything other than the golden package so the form still submits.
+  applyPackageToQuestionnaire() {
+    const packageKey = sessionStorage.getItem('pending_package');
+    const vibeGroup = document.getElementById('vibeGroup');
+    if (!vibeGroup) return;
+
+    const showVibe = packageKey === 'golden';
+    vibeGroup.hidden = !showVibe;
+    vibeGroup.querySelectorAll('input[name="vibe"]').forEach(input => {
+      input.disabled = !showVibe;
+    });
+    // Keep native validation in sync with visibility
+    const firstVibe = vibeGroup.querySelector('input[name="vibe"]');
+    if (firstVibe) {
+      if (showVibe) firstVibe.setAttribute('required', '');
+      else firstVibe.removeAttribute('required');
+    }
+  }
+
   // Landing back from a Stripe Payment Link (?package=puppy|golden). Remembers
   // which package was bought so the questionnaire can build the order once
   // submitted, then strips the query param so a refresh doesn't re-trigger it.
@@ -154,6 +175,8 @@ class DogTastikApp {
     let activeView = 'homeView';
     if (hash === '#questionnaire') activeView = 'questionnaireView';
     else if (hash === '#thankyou') activeView = 'thankyouView';
+
+    if (activeView === 'questionnaireView') this.applyPackageToQuestionnaire();
 
     views.forEach(v => {
       const el = document.getElementById(v);
@@ -303,8 +326,10 @@ class DogTastikApp {
       return;
     }
 
+    // Desired vibe is a Golden Record-only question; Puppy Jingle skips it.
+    const isGolden = packageKey === 'golden';
     const vibeInput = document.querySelector('input[name="vibe"]:checked');
-    if (!vibeInput) {
+    if (isGolden && !vibeInput) {
       alert('Please pick a desired vibe.');
       return;
     }
@@ -321,7 +346,7 @@ class DogTastikApp {
       relationship_note: document.getElementById('relationshipNote').value,
       signature_sound: signatureSound,
       signature_sound_other: signatureSoundOther,
-      vibe: vibeInput.value
+      vibe: vibeInput ? vibeInput.value : ''
     };
 
     const pkg = PACKAGES[packageKey];

@@ -95,7 +95,8 @@
   - Other: ___________ (free text)
 - **Validation:** at least 1 selected, or "Other" text filled in.
 
-### 8. Desired Vibe
+### 8. Desired Vibe — Golden Record only
+- **Shown only for the Golden Record package.** Puppy Jingle buyers do not see this question and `vibe` is submitted as an empty string (we choose the vibe for them).
 - **Type:** Single-select (radio/cards)
 - **Field name:** `vibe`
 - **Options:**
