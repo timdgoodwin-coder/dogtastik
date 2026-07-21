@@ -412,6 +412,13 @@ section {
   align-items: center;
   justify-content: center;
   border: 2px solid var(--border);
+  overflow: hidden;
+}
+
+.dog-avatar img {
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
 }
 
 .sample-info h3 {
