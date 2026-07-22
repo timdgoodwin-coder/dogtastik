@@ -344,6 +344,7 @@ class DogTastikApp {
       fear_or_dislike: document.getElementById('fearOrDislike').value,
       favorite_person: document.getElementById('favoritePerson').value,
       relationship_note: document.getElementById('relationshipNote').value,
+      social_handle: document.getElementById('socialHandle').value.trim(),
       signature_sound: signatureSound,
       signature_sound_other: signatureSoundOther,
       vibe: vibeInput ? vibeInput.value : ''

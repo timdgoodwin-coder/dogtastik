@@ -4,6 +4,13 @@
 
 ---
 
+### 0b. Instagram / TikTok (optional)
+- **Type:** Free text (short text)
+- **Field name:** `social_handle`
+- **Placeholder:** "@yourdog"
+- **Label note:** "if public, so we can see your dog in action!"
+- **Required:** no
+
 ### 1. Dog's Name & Breed
 - **Type:** Two short text fields, plus an optional nickname field
   - `dog_name` (text, required)
@@ -117,6 +124,7 @@
   "dog_name": "Chester",
   "dog_breed": "Golden Retriever",
   "dog_nickname": "Chessie, Big Man",
+  "social_handle": "@chester_the_golden",
   "personality_traits": ["Loving", "Goofy", "Cuddly"],
   "funny_habit": "always having a toy in their mouth",
   "favorite_thing": "their humans",
