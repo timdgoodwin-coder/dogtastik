@@ -310,7 +310,11 @@
             <ul class="pricing-features">
               <li>
                 <svg viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
-                60-second+ custom track
+                60-second+ full song
+              </li>
+              <li>
+                <svg viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
+                Plus a shorter jingle cut
               </li>
               <li>
                 <svg viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
@@ -357,6 +361,12 @@
           <div class="form-group">
             <label for="socialHandle">Instagram or TikTok <span style="color: var(--text-muted); font-weight: normal;">(optional — if public, so we can see your dog in action!)</span></label>
             <input type="text" id="socialHandle" placeholder="@yourdog">
+          </div>
+
+          <!-- 0c. WhatsApp number (Golden Record only) -->
+          <div class="form-group" id="whatsappGroup">
+            <label for="whatsappNumber">WhatsApp Number <span style="color: var(--text-muted); font-weight: normal;">(optional — we may message you here, and you can send a voice note with any extra details!)</span></label>
+            <input type="tel" id="whatsappNumber" placeholder="+1 555 123 4567">
           </div>
 
           <!-- 1. Name & Breed -->
@@ -494,6 +504,12 @@
               <label class="vibe-card"><input type="radio" name="vibe" value="Fun Country/Folk Sing-Along"><span>Fun Country/Folk Sing-Along</span></label>
               <label class="vibe-card"><input type="radio" name="vibe" value="Quirky & Comedic"><span>Quirky &amp; Comedic</span></label>
             </div>
+          </div>
+
+          <!-- 9. Anything else (both packages) -->
+          <div class="form-group">
+            <label for="anythingElse">Anything Else? <span style="color: var(--text-muted); font-weight: normal;">(optional)</span></label>
+            <textarea id="anythingElse" placeholder="Anything else you'd like us to know or include in the song..."></textarea>
           </div>
 
           <button type="submit" class="btn btn-cta" style="width: 100%;">Submit & Generate Jingle</button>

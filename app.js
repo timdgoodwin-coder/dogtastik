@@ -57,18 +57,24 @@ class DogTastikApp {
   // radio for anything other than the golden package so the form still submits.
   applyPackageToQuestionnaire() {
     const packageKey = sessionStorage.getItem('pending_package');
+    const isGolden = packageKey === 'golden';
+
+    // The WhatsApp number is a Golden Record perk (we may message them and they
+    // can reply with a voice note), so hide it for the Puppy Jingle.
+    const whatsappGroup = document.getElementById('whatsappGroup');
+    if (whatsappGroup) whatsappGroup.hidden = !isGolden;
+
     const vibeGroup = document.getElementById('vibeGroup');
     if (!vibeGroup) return;
 
-    const showVibe = packageKey === 'golden';
-    vibeGroup.hidden = !showVibe;
+    vibeGroup.hidden = !isGolden;
     vibeGroup.querySelectorAll('input[name="vibe"]').forEach(input => {
-      input.disabled = !showVibe;
+      input.disabled = !isGolden;
     });
     // Keep native validation in sync with visibility
     const firstVibe = vibeGroup.querySelector('input[name="vibe"]');
     if (firstVibe) {
-      if (showVibe) firstVibe.setAttribute('required', '');
+      if (isGolden) firstVibe.setAttribute('required', '');
       else firstVibe.removeAttribute('required');
     }
   }
@@ -345,9 +351,11 @@ class DogTastikApp {
       favorite_person: document.getElementById('favoritePerson').value,
       relationship_note: document.getElementById('relationshipNote').value,
       social_handle: document.getElementById('socialHandle').value.trim(),
+      whatsapp_number: isGolden ? document.getElementById('whatsappNumber').value.trim() : '',
       signature_sound: signatureSound,
       signature_sound_other: signatureSoundOther,
-      vibe: vibeInput ? vibeInput.value : ''
+      vibe: vibeInput ? vibeInput.value : '',
+      anything_else: document.getElementById('anythingElse').value.trim()
     };
 
     const pkg = PACKAGES[packageKey];
